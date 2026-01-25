@@ -17,7 +17,7 @@ class DashboardController extends Controller
             'active_exams' => Exam::where('status', 'PUBLISHED')
                 ->where('end_time', '>', now())
                 ->count(),
-            'total_students' => User::where('role', 'student')->count(), // Assuming 'role' column or similar logic
+            'total_students' => User::count(), // Temporary fix: Count all users until role logic is confirmed
             'total_attempts' => ExamAttempt::count(),
         ];
 
