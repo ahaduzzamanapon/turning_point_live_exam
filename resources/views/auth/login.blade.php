@@ -20,12 +20,33 @@
 
         .form-control:focus {
             background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+            box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.25);
+            border-color: #e53935;
         }
 
         .transition-all:hover {
             transform: translateY(-1px);
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .bg-red-gradient {
+            background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
+        }
+
+        .text-red {
+            color: #e53935 !important;
+        }
+
+        .btn-red {
+            background-color: #e53935;
+            border-color: #e53935;
+            color: white;
+        }
+
+        .btn-red:hover {
+            background-color: #c62828;
+            border-color: #c62828;
+            color: white;
         }
     </style>
 </head>
@@ -34,11 +55,11 @@
 
     <div class="row g-0 min-vh-100">
         <!-- Left Side: Branding -->
-        <div class="col-lg-6 d-none d-lg-flex flex-column align-items-center justify-content-center text-white text-center p-5"
-            style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+        <div
+            class="col-lg-6 d-none d-lg-flex flex-column align-items-center justify-content-center text-white text-center p-5 bg-red-gradient">
             <div class="mb-4">
                 <div class="bg-white rounded-circle p-3 d-inline-flex shadow-sm mb-3">
-                    <i class="fas fa-graduation-cap fa-4x text-primary"></i>
+                    <i class="fas fa-graduation-cap fa-4x text-red"></i>
                 </div>
             </div>
             <h1 class="fw-bold display-5 mb-2">TurningPoint Exam System</h1>
@@ -86,15 +107,16 @@
                     </div>
 
                     <div class="d-grid mb-4">
-                        <button class="btn btn-primary btn-lg fw-bold py-3 shadow-sm transition-all" type="submit">
+                        <button class="btn btn-red btn-lg fw-bold py-3 shadow-sm transition-all" type="submit">
                             Sign In <i class="fas fa-arrow-right ms-2"></i>
                         </button>
                     </div>
 
                     <div class="text-center d-flex justify-content-between align-items-center">
-                        <a class="small text-decoration-none fw-bold" href="{{ route('password.request') }}">Forgot
+                        <a class="small text-decoration-none fw-bold text-secondary"
+                            href="{{ route('password.request') }}">Forgot
                             Password?</a>
-                        <a class="small text-decoration-none fw-bold text-success" href="{{ route('register') }}">Create
+                        <a class="small text-decoration-none fw-bold text-red" href="{{ route('register') }}">Create
                             Account</a>
                     </div>
                 </form>
