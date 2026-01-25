@@ -74,11 +74,46 @@ class MenuSeeder extends Seeder
             'order' => 3,
         ]);
 
+        // Exam Management
+        $examManagement = Menu::create([
+            'title' => 'Exam Management',
+            'icon' => 'bi bi-journal-check',
+            'order' => 2, // Adjusted order
+        ]);
+
         Menu::create([
-            'title' => 'Theme Settings',
-            'route' => 'admin.theme.index',
-            'parent_id' => $configurations->id,
+            'title' => 'Subjects',
+            'route' => 'admin.subjects.index',
+            'parent_id' => $examManagement->id,
+            'order' => 1,
+        ]);
+
+        Menu::create([
+            'title' => 'Topics',
+            'route' => 'admin.topics.index',
+            'parent_id' => $examManagement->id,
+            'order' => 2,
+        ]);
+
+        Menu::create([
+            'title' => 'Questions',
+            'route' => 'admin.questions.index',
+            'parent_id' => $examManagement->id,
+            'order' => 3,
+        ]);
+
+        Menu::create([
+            'title' => 'Exams',
+            'route' => 'admin.exams.index',
+            'parent_id' => $examManagement->id,
             'order' => 4,
+        ]);
+
+        Menu::create([
+            'title' => 'Student Results',
+            'route' => 'admin.results.index',
+            'parent_id' => $examManagement->id,
+            'order' => 5,
         ]);
     }
 }

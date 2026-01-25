@@ -10,7 +10,7 @@ Route::prefix('admin')->group(function () {
 
     Route::middleware('auth:admin')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-        
+
         Route::post('menus/order', [\App\Http\Controllers\Admin\MenuController::class, 'updateOrder'])->name('admin.menus.order')->middleware('permission:menus.edit');
         Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class)->names('admin.menus')->middleware('permission:menus.browse');
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->names('admin.users')->middleware('permission:users.browse');
@@ -33,6 +33,21 @@ Route::prefix('admin')->group(function () {
 
         Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index')->middleware('permission:settings.browse');
         Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update')->middleware('permission:settings.edit');
+
+        // Exam Management Routes
+        Route::resource('subjects', \App\Http\Controllers\Admin\SubjectController::class)->names('admin.subjects');
+        Route::resource('topics', \App\Http\Controllers\Admin\TopicController::class)->names('admin.topics');
+        Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->names('admin.questions');
+
+        // Exam Assignment
+        Route::get('exams/{exam}/assign', [\App\Http\Controllers\Admin\ExamController::class, 'assign'])->name('admin.exams.assign');
+        Route::post('exams/{exam}/assign', [\App\Http\Controllers\Admin\ExamController::class, 'storeAssignment'])->name('admin.exams.storeAssignment');
+
+        Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class)->names('admin.exams');
+
+        // Result Management
+        Route::get('results', [\App\Http\Controllers\Admin\ResultController::class, 'index'])->name('admin.results.index');
+        Route::get('results/{id}', [\App\Http\Controllers\Admin\ResultController::class, 'show'])->name('admin.results.show');
 
         require base_path('routes/crud.php');
     });

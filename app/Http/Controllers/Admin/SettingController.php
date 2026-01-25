@@ -21,10 +21,27 @@ class SettingController extends Controller
             'browser_title' => 'nullable|string|max:255',
             'app_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'favicon' => 'nullable|image|mimes:ico,png,jpg,gif,svg|max:512',
+            // Mail Settings
+            'mail_mailer' => 'nullable|string',
+            'mail_host' => 'nullable|string',
+            'mail_port' => 'nullable|string',
+            'mail_username' => 'nullable|string',
+            'mail_password' => 'nullable|string',
+            'mail_encryption' => 'nullable|string',
+            'mail_from_address' => 'nullable|email',
+            'mail_from_name' => 'nullable|string',
         ]);
 
         Setting::set('app_name', $request->input('app_name'));
         Setting::set('browser_title', $request->input('browser_title', $request->input('app_name')));
+
+        // Save Mail Settings
+        $mailKeys = ['mail_mailer', 'mail_host', 'mail_port', 'mail_username', 'mail_password', 'mail_encryption', 'mail_from_address', 'mail_from_name'];
+        foreach ($mailKeys as $key) {
+            if ($request->has($key)) {
+                Setting::set($key, $request->input($key));
+            }
+        }
 
         if ($request->hasFile('app_logo')) {
             // Delete old logo if exists

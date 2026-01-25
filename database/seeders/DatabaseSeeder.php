@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             MenuSeeder::class,
             ThemePresetSeeder::class,
+            ExamSystemSeeder::class,
         ]);
     }
 }

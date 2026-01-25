@@ -10,22 +10,22 @@
     @endphp
 
     :root {
-        --primary-color: {{ $themeSettings['primary_color'] ?? '#4f46e5' }};
-        --danger-color: {{ $themeSettings['danger_color'] ?? '#dc3545' }};
-        --body-text-color: {{ $themeSettings['body_text_color'] ?? '#212529' }};
-        --body-bg-color: {{ $themeSettings['body_bg_color'] ?? '#f8f9fa' }};
-        --sidebar-bg: {{ $themeSettings['sidebar_bg'] ?? '#111827' }};
-        --sidebar-text-color: {{ $themeSettings['sidebar_text_color'] ?? '#9ca3af' }};
-        --active-menu-bg: {{ $themeSettings['active_menu_bg'] ?? 'rgba(255,255,255,0.1)' }};
-        --hover-menu-bg: {{ $themeSettings['hover_menu_bg'] ?? 'rgba(255,255,255,0.1)' }};
-        --active-menu-text-color: {{ $themeSettings['active_menu_text_color'] ?? '#ffffff' }};
-        --card-bg: {{ $themeSettings['card_bg'] ?? '#ffffff' }};
-        --table-header-bg: {{ $themeSettings['table_header_bg'] ?? '#f8f9fa' }};
-        --table-header-text-color: {{ $themeSettings['table_header_text_color'] ?? '#212529' }};
-        --table-font-size: {{ $themeSettings['table_font_size'] ?? '16' }}px;
-        --navbar-bg: {{ $themeSettings['navbar_bg'] ?? '#ffffff' }};
-        --navbar-text-color: {{ $themeSettings['navbar_text_color'] ?? '#212529' }};
-    }
+    --primary-color: #ff0023;
+    --danger-color: #ef4444;
+    --body-text-color: #000000;
+    --body-bg-color: #fdecec;
+    --sidebar-bg: #ffffff;
+    --sidebar-text-color: #000000;
+    --active-menu-bg: #ff0000;
+    --hover-menu-bg: #ff0000;
+    --active-menu-text-color: #ffffff;
+    --card-bg: #ffffff;
+    --table-header-bg: #ff9494;
+    --table-header-text-color: #000000;
+    --table-font-size: 16px;
+    --navbar-bg: #ffffff;
+    --navbar-text-color: #ff0000;
+}
 
     /* --- Global & Typography --- */
     body {
