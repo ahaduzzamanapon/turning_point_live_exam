@@ -1,48 +1,101 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
-        <div class="col-md-5">
-            <div class="card shadow-lg border-0 rounded-lg">
-                <div class="card-header bg-primary text-white text-center py-4" style="border-radius: 15px 15px 0 0;">
-                    <h3 class="font-weight-light my-1"><i class="fas fa-user-graduate me-2"></i>Student Login</h3>
-                </div>
-                <div class="card-body p-5">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
-                        <div class="form-floating mb-3">
-                            <input class="form-control @error('email') is-invalid @enderror" id="inputEmail" type="email"
-                                name="email" value="{{ old('email') }}" placeholder="name@example.com" required autofocus />
-                            <label for="inputEmail">Email address</label>
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input class="form-control @error('password') is-invalid @enderror" id="inputPassword"
-                                type="password" name="password" placeholder="Password" required />
-                            <label for="inputPassword">Password</label>
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                            <a class="small text-decoration-none" href="{{ route('password.request') }}">Forgot
-                                Password?</a>
-                            <button class="btn btn-primary btn-lg rounded-pill px-5" type="submit">Login</button>
-                        </div>
-                    </form>
+    <div class="row g-0 min-vh-100">
+        <!-- Left Side: Branding -->
+        <div class="col-lg-6 d-none d-lg-flex flex-column align-items-center justify-content-center text-white text-center p-5"
+            style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+            <div class="mb-4">
+                <div class="bg-white rounded-circle p-3 d-inline-flex shadow-sm mb-3">
+                    <i class="fas fa-graduation-cap fa-4x text-primary"></i>
                 </div>
             </div>
-            <div class="text-center mt-3 text-muted">
-                <small>Need an account? <a href="{{ route('register') }}" class="text-decoration-none fw-bold">Sign
-                        up!</a></small><br>
-                <small>Admin Login? <a href="{{ route('admin.login') }}" class="text-decoration-none">Click Here</a></small>
+            <h1 class="fw-bold display-5 mb-2">TurningPoint Exam System</h1>
+            <p class="fs-5 opacity-75 mb-4">Empowering students to achieve their academic goals.</p>
+            <div class="small opacity-50">
+                &copy; {{ date('Y') }} TurningPoint. All rights reserved.
+            </div>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-white p-4 p-md-5">
+            <div class="w-100" style="max-width: 450px;">
+                <div class="mb-5">
+                    <h2 class="fw-bold text-dark mb-1">Welcome Back!</h2>
+                    <p class="text-muted">Please sign in to continue accessing your exam panel.</p>
+                </div>
+
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+
+                    <div class="mb-4">
+                        <label for="inputEmail"
+                            class="form-label text-uppercase small fw-bold text-muted custom-label">Email Address</label>
+                        <input class="form-control form-control-lg bg-light border-0 @error('email') is-invalid @enderror"
+                            id="inputEmail" type="email" name="email" value="{{ old('email') }}"
+                            placeholder="name@example.com" required autofocus
+                            style="padding: 1rem 1.25rem; font-size: 0.95rem;">
+                        @error('email')
+                            <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="inputPassword"
+                            class="form-label text-uppercase small fw-bold text-muted custom-label">Password</label>
+                        <input
+                            class="form-control form-control-lg bg-light border-0 @error('password') is-invalid @enderror"
+                            id="inputPassword" type="password" name="password" placeholder="........" required
+                            style="padding: 1rem 1.25rem; font-size: 0.95rem;">
+                        @error('password')
+                            <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                        @enderror
+                    </div>
+
+                    <div class="d-grid mb-4">
+                        <button class="btn btn-primary btn-lg fw-bold py-3 shadow-sm transition-all" type="submit">
+                            Sign In <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+
+                    <div class="text-center d-flex justify-content-between align-items-center">
+                        <a class="small text-decoration-none fw-bold" href="{{ route('password.request') }}">Forgot
+                            Password?</a>
+                        <a class="small text-decoration-none fw-bold text-success" href="{{ route('register') }}">Create
+                            Account</a>
+                    </div>
+                </form>
+
+                <div class="mt-5 pt-4 text-center border-top">
+                    <small class="text-muted">Are you an Admin? <a href="{{ route('admin.login') }}"
+                            class="text-decoration-none fw-bold">Login Here</a></small>
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+        /* Remove default container padding constraints for full width */
+        .container,
+        .container-fluid {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+        }
+
+        .custom-label {
+            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+        }
+
+        .form-control:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        }
+
+        .transition-all:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+    </style>
 @endsection
