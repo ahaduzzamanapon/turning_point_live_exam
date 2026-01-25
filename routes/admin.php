@@ -43,6 +43,13 @@ Route::prefix('admin')->group(function () {
         Route::get('exams/{exam}/assign', [\App\Http\Controllers\Admin\ExamController::class, 'assign'])->name('admin.exams.assign');
         Route::post('exams/{exam}/assign', [\App\Http\Controllers\Admin\ExamController::class, 'storeAssignment'])->name('admin.exams.storeAssignment');
 
+        // Static Question Paper Management
+        Route::get('exams/{exam}/paper', [\App\Http\Controllers\Admin\ExamPaperController::class, 'index'])->name('admin.exams.paper.index');
+        Route::post('exams/{exam}/paper/generate', [\App\Http\Controllers\Admin\ExamPaperController::class, 'generate'])->name('admin.exams.paper.generate');
+        Route::post('exams/{exam}/paper/store', [\App\Http\Controllers\Admin\ExamPaperController::class, 'store'])->name('admin.exams.paper.store');
+        Route::delete('exams/{exam}/paper/{question}', [\App\Http\Controllers\Admin\ExamPaperController::class, 'destroy'])->name('admin.exams.paper.destroy');
+        Route::get('exams/paper/search', [\App\Http\Controllers\Admin\ExamPaperController::class, 'search'])->name('admin.exams.paper.search');
+
         Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class)->names('admin.exams');
 
         // Result Management

@@ -48,16 +48,26 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.exams.assign', $exam->id) }}"
-                                            class="btn btn-sm btn-warning">Assign</a>
                                         <a href="{{ route('admin.exams.edit', $exam->id) }}"
-                                            class="btn btn-sm btn-info">Edit</a>
+                                            class="btn btn-primary btn-sm rounded-circle me-1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ route('admin.exams.paper.index', $exam->id) }}"
+                                            class="btn btn-warning btn-sm rounded-circle me-1" title="Manage Question Paper">
+                                            <i class="fas fa-file-alt"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-info btn-sm rounded-circle me-1" title="Assign"
+                                            onclick="openAssignModal({{ $exam->id }}, '{{ $exam->title }}', '{{ $exam->access_mode }}')">
+                                            <i class="fas fa-user-plus"></i>
+                                        </button>
                                         <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST"
                                             class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure?')">Delete</button>
+                                            <button type="submit" class="btn btn-danger btn-sm rounded-circle"
+                                                onclick="return confirm('Are you sure?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>

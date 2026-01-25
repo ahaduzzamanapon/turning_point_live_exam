@@ -40,4 +40,11 @@ class Exam extends Model
     {
         return $this->hasMany(ExamAttempt::class);
     }
+
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'exam_questions', 'exam_id', 'question_id')
+            ->withPivot('order')
+            ->orderBy('pivot_order');
+    }
 }

@@ -38,47 +38,52 @@ class ExamGeneratorService
                 'status' => 'ONGOING',
             ]);
 
-            // Fetch Rules
-            $rules = $exam->rules;
-            $selectedQuestions = collect();
+            // 1. Check if Exam has a Static Question Paper
+            if ($exam->questions()->count() > 0) {
+                $finalQuestions = $exam->questions;
+            } else {
+                // 2. Fallback to Dynamic Rule-based Generation
+                $rules = $exam->rules;
+                $selectedQuestions = collect();
 
-            foreach ($rules as $rule) {
-                // Fetch Easy Questions
-                if ($rule->easy > 0) {
-                    $questions = Question::where('subject_id', $rule->subject_id)
-                        ->where('difficulty', 'EASY')
-                        ->where('status', 'APPROVED')
-                        ->inRandomOrder()
-                        ->limit($rule->easy)
-                        ->get();
-                    $selectedQuestions = $selectedQuestions->merge($questions);
+                foreach ($rules as $rule) {
+                    // Fetch Easy Questions
+                    if ($rule->easy > 0) {
+                        $questions = Question::where('subject_id', $rule->subject_id)
+                            ->where('difficulty', 'EASY')
+                            ->where('status', 'APPROVED')
+                            ->inRandomOrder()
+                            ->limit($rule->easy)
+                            ->get();
+                        $selectedQuestions = $selectedQuestions->merge($questions);
+                    }
+
+                    // Fetch Medium Questions
+                    if ($rule->medium > 0) {
+                        $questions = Question::where('subject_id', $rule->subject_id)
+                            ->where('difficulty', 'MEDIUM')
+                            ->where('status', 'APPROVED')
+                            ->inRandomOrder()
+                            ->limit($rule->medium)
+                            ->get();
+                        $selectedQuestions = $selectedQuestions->merge($questions);
+                    }
+
+                    // Fetch Hard Questions
+                    if ($rule->hard > 0) {
+                        $questions = Question::where('subject_id', $rule->subject_id)
+                            ->where('difficulty', 'HARD')
+                            ->where('status', 'APPROVED')
+                            ->inRandomOrder()
+                            ->limit($rule->hard)
+                            ->get();
+                        $selectedQuestions = $selectedQuestions->merge($questions);
+                    }
                 }
 
-                // Fetch Medium Questions
-                if ($rule->medium > 0) {
-                    $questions = Question::where('subject_id', $rule->subject_id)
-                        ->where('difficulty', 'MEDIUM')
-                        ->where('status', 'APPROVED')
-                        ->inRandomOrder()
-                        ->limit($rule->medium)
-                        ->get();
-                    $selectedQuestions = $selectedQuestions->merge($questions);
-                }
-
-                // Fetch Hard Questions
-                if ($rule->hard > 0) {
-                    $questions = Question::where('subject_id', $rule->subject_id)
-                        ->where('difficulty', 'HARD')
-                        ->where('status', 'APPROVED')
-                        ->inRandomOrder()
-                        ->limit($rule->hard)
-                        ->get();
-                    $selectedQuestions = $selectedQuestions->merge($questions);
-                }
+                // Shuffle final question set
+                $finalQuestions = $selectedQuestions->shuffle();
             }
-
-            // Shuffle final question set
-            $finalQuestions = $selectedQuestions->shuffle();
 
             // Store Questions in ExamAnswers (Lock the paper)
             foreach ($finalQuestions as $question) {
