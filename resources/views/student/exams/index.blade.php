@@ -38,9 +38,9 @@
                                     <td>
                                         <div class="small text-muted">
                                             <div class="mb-1"><i class="fas fa-calendar-alt me-1 text-success"></i> Start:
-                                                {{ $exam->start_time->format('M d, h:i A') }}</div>
+                                                {{ $exam->start_time->format('M d, Y h:i A') }}</div>
                                             <div><i class="fas fa-calendar-times me-1 text-danger"></i> End:
-                                                {{ $exam->end_time->format('M d, h:i A') }}</div>
+                                                {{ $exam->end_time->format('M d, Y h:i A') }}</div>
                                         </div>
                                     </td>
                                     <td class="text-end pe-5">
