@@ -49,7 +49,7 @@ class ExamController extends Controller
             'rules.*.hard' => 'required|integer|min:0',
         ]);
 
-        DB::transaction(function () use ($validated, $request) {
+        $exam = DB::transaction(function () use ($validated, $request) {
             $exam = Exam::create([
                 'title' => $validated['title'],
                 'duration_minutes' => $validated['duration_minutes'],
@@ -75,6 +75,8 @@ class ExamController extends Controller
                     ]);
                 }
             }
+
+            return $exam;
         });
 
         if ($request->input('action') === 'save_and_generate') {
