@@ -20,7 +20,7 @@
                     <table class="table table-bordered" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>SL</th>
                                 <th>Title</th>
                                 <th>Duration (min)</th>
                                 <th>Schedule</th>
@@ -31,7 +31,7 @@
                         <tbody>
                             @forelse($exams as $exam)
                                 <tr>
-                                    <td>{{ $exam->id }}</td>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $exam->title }}</td>
                                     <td>{{ $exam->duration_minutes }}</td>
                                     <td>
@@ -56,10 +56,10 @@
                                             class="btn btn-warning btn-sm rounded-circle me-1" title="Manage Question Paper">
                                             <i class="fas fa-file-alt"></i>
                                         </a>
-                                        <button type="button" class="btn btn-info btn-sm rounded-circle me-1" title="Assign"
-                                            onclick="openAssignModal({{ $exam->id }}, '{{ $exam->title }}', '{{ $exam->access_mode }}')">
+                                        <a href="{{ route('admin.exams.assign', $exam->id) }}"
+                                            class="btn btn-info btn-sm rounded-circle me-1 text-white" title="Assign">
                                             <i class="fas fa-user-plus"></i>
-                                        </button>
+                                        </a>
                                         <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST"
                                             class="d-inline">
                                             @csrf
