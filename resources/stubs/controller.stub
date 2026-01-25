@@ -1,0 +1,68 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ modelNamespace }}\{{ modelName }};
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+class {{ className }} extends Controller
+{
+    public function index(Request $request)
+    {
+{{ searchLogic }}
+        if ($request->ajax()) {
+            return view('admin.{{ modelVariablePlural }}.table', compact('items'))->render();
+        }
+        return view('admin.{{ modelVariablePlural }}.index', compact('items'));
+    }
+
+{{ exportMethods }}
+
+    public function create()
+    {
+{{ relations }}
+        return view('admin.{{ modelVariablePlural }}.create'{{ compact }});
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+{{ rules }}
+        ]);
+
+        $data = $request->except({{ except }});
+{{ storeImage }}
+        {{ modelName }}::create($data);
+        return redirect()->route('admin.{{ modelVariablePlural }}.index')->with('success', '{{ modelName }} created successfully.');
+    }
+
+    public function edit($id)
+    {
+        $item = {{ modelName }}::findOrFail($id);
+{{ relations }}
+        return view('admin.{{ modelVariablePlural }}.edit', compact('item'{{ compact }}));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $item = {{ modelName }}::findOrFail($id);
+        $data = $request->validate([
+{{ rules }}
+        ]);
+
+        $data = $request->except({{ except }});
+{{ updateImage }}
+        $item->update($data);
+        return redirect()->route('admin.{{ modelVariablePlural }}.index')->with('success', '{{ modelName }} updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $item = {{ modelName }}::findOrFail($id);
+{{ deleteImage }}
+        $item->delete();
+        return back()->with('success', '{{ modelName }} deleted successfully.');
+    }
+}

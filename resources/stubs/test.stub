@@ -1,0 +1,73 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use App\Models\{{ modelName }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class {{ modelName }}Test extends TestCase
+{
+    use RefreshDatabase;
+
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+    }
+
+    public function test_index_page_is_accessible()
+    {
+        $response = $this->actingAs($this->user)->get(route('admin.{{ modelVariablePlural }}.index'));
+        $response->assertStatus(200);
+    }
+
+    public function test_create_page_is_accessible()
+    {
+        $response = $this->actingAs($this->user)->get(route('admin.{{ modelVariablePlural }}.create'));
+        $response->assertStatus(200);
+    }
+
+    public function test_store_new_{{ modelVariable }}()
+    {
+        $data = {{ factoryData }};
+
+        $response = $this->actingAs($this->user)->post(route('admin.{{ modelVariablePlural }}.store'), $data);
+
+        $response->assertRedirect(route('admin.{{ modelVariablePlural }}.index'));
+        $this->assertDatabaseHas('{{ tableName }}', $data);
+    }
+
+    public function test_edit_page_is_accessible()
+    {
+        $item = {{ modelName }}::create({{ factoryData }});
+
+        $response = $this->actingAs($this->user)->get(route('admin.{{ modelVariablePlural }}.edit', $item->id));
+        $response->assertStatus(200);
+    }
+
+    public function test_update_{{ modelVariable }}()
+    {
+        $item = {{ modelName }}::create({{ factoryData }});
+        $newData = {{ factoryData }};
+
+        $response = $this->actingAs($this->user)->put(route('admin.{{ modelVariablePlural }}.update', $item->id), $newData);
+
+        $response->assertRedirect(route('admin.{{ modelVariablePlural }}.index'));
+        $this->assertDatabaseHas('{{ tableName }}', $newData);
+    }
+
+    public function test_delete_{{ modelVariable }}()
+    {
+        $item = {{ modelName }}::create({{ factoryData }});
+
+        $response = $this->actingAs($this->user)->delete(route('admin.{{ modelVariablePlural }}.destroy', $item->id));
+
+        $response->assertRedirect(route('admin.{{ modelVariablePlural }}.index'));
+        $this->assertDatabaseMissing('{{ tableName }}', ['id' => $item->id]);
+    }
+}

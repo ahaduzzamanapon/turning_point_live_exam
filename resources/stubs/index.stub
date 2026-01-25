@@ -1,0 +1,87 @@
+@extends('admin.layouts.app')
+
+@section('content')
+<div class="container-fluid">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <div class="card card-fixed shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-gray-800 fw-bold">{{ modelName }} List</h5>
+            <div class="d-flex align-items-center">
+{{ searchForm }}
+{{ exportButtons }}
+                <a href="{{ route('admin.{{ modelVariablePlural }}.create') }}" class="btn btn-primary btn-sm ms-2">
+                    <i class="bi bi-plus-lg me-1"></i> Add New
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0" id="table-container" style="position: relative;">
+            <div id="search-loader" class="search-loader-overlay d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            @include('admin.{{ modelVariablePlural }}.table')
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Debounce function to limit ajax calls
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+
+        // AJAX Search
+        $('#searchInput').on('keyup', debounce(function() {
+            var query = $(this).val();
+            fetchData(query);
+        }, 300));
+
+        function fetchData(query = '', page = 1) {
+            $('#search-loader').removeClass('d-none');
+            $.ajax({
+                url: "{{ route('admin.{{ modelVariablePlural }}.index') }}",
+                method: 'GET',
+                data: { search: query, page: page },
+                success: function(data) {
+                    $('#table-container').html(data);
+                    // Re-add loader element since it was replaced
+                    $('#table-container').prepend(`
+                        <div id="search-loader" class="search-loader-overlay d-none">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    `);
+                },
+                complete: function() {
+                    $('#search-loader').addClass('d-none');
+                }
+            });
+        }
+
+        // Pagination with AJAX
+        $(document).on('click', '.pagination a', function(event) {
+            event.preventDefault();
+            var page = $(this).attr('href').split('page=')[1];
+            var query = $('#searchInput').val();
+            fetchData(query, page);
+        });
+    });
+</script>
+@endpush
+@endsection
+
