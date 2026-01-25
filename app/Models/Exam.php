@@ -44,7 +44,7 @@ class Exam extends Model
     public function questions()
     {
         return $this->belongsToMany(Question::class, 'exam_questions', 'exam_id', 'question_id')
-            ->withPivot('order')
+            ->withPivot('pivot_order')
             ->orderBy('pivot_order');
     }
 }
