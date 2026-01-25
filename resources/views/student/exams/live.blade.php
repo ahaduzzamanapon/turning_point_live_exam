@@ -5,7 +5,7 @@
         <div class="row g-4">
             <!-- Sidebar / Navigation -->
             <div class="col-lg-3 order-lg-last">
-                <div class="card shadow border-0 fixed-sidebar h-100 rounded-3 overflow-hidden">
+                <div class="card shadow border-0 fixed-sidebar rounded-3 overflow-hidden">
                     <div class="card-header bg-danger text-white text-center py-4">
                         <h6 class="mb-2 text-uppercase letter-spacing-2 opacity-75" style="font-size: 0.8rem;">Time
                             Remaining</h6>
@@ -73,7 +73,8 @@
                                 </div>
                                 <div class="flex-grow-1 ms-3 pt-1">
                                     <h5 class="fw-bold text-dark mb-2" style="font-size: 1.15rem; line-height: 1.6;">
-                                        {{ $answer->question->question_text }}</h5>
+                                        {{ $answer->question->question_text }}
+                                    </h5>
                                     <div>
                                         <span
                                             class="badge bg-light text-secondary border rounded-pill px-3 py-1">{{ $answer->question->question_type == 'SINGLE' ? 'Single Choice' : 'Multiple Choice' }}</span>
@@ -301,6 +302,6 @@
                     document.getElementById('status-dot-{{ $answer->question_id }}').classList.remove('d-none');
                 @endif
             @endforeach
-        });
+            });
     </script>
 @endsection
