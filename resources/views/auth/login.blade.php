@@ -1,6 +1,37 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - TurningPoint</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .custom-label {
+            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+        }
+
+        .form-control:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        }
+
+        .transition-all:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+    </style>
+</head>
+
+<body>
+
     <div class="row g-0 min-vh-100">
         <!-- Left Side: Branding -->
         <div class="col-lg-6 d-none d-lg-flex flex-column align-items-center justify-content-center text-white text-center p-5"
@@ -30,8 +61,10 @@
 
                     <div class="mb-4">
                         <label for="inputEmail"
-                            class="form-label text-uppercase small fw-bold text-muted custom-label">Email Address</label>
-                        <input class="form-control form-control-lg bg-light border-0 @error('email') is-invalid @enderror"
+                            class="form-label text-uppercase small fw-bold text-muted custom-label">Email
+                            Address</label>
+                        <input
+                            class="form-control form-control-lg bg-light border-0 @error('email') is-invalid @enderror"
                             id="inputEmail" type="email" name="email" value="{{ old('email') }}"
                             placeholder="name@example.com" required autofocus
                             style="padding: 1rem 1.25rem; font-size: 0.95rem;">
@@ -74,28 +107,6 @@
         </div>
     </div>
 
-    <style>
-        /* Remove default container padding constraints for full width */
-        .container,
-        .container-fluid {
-            padding: 0 !important;
-            margin: 0 !important;
-            max-width: 100% !important;
-        }
+</body>
 
-        .custom-label {
-            letter-spacing: 0.5px;
-            font-size: 0.75rem;
-        }
-
-        .form-control:focus {
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
-        }
-
-        .transition-all:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        }
-    </style>
-@endsection
+</html>
