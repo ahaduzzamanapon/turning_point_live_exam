@@ -77,6 +77,53 @@ class ExamController extends Controller
             }
         });
 
+        if ($request->input('action') === 'save_and_generate') {
+            // Generate Paper Logic (Replicated from ExamPaperController to avoid redirect loop)
+            // 1. Fetch questions based on rules
+            $rules = $exam->rules;
+            $selectedQuestionIds = [];
+
+            // We need to import Question model at top or use full path
+            foreach ($rules as $rule) {
+                if ($rule->easy > 0) {
+                    $ids = \App\Models\Question::where('subject_id', $rule->subject_id)
+                        ->where('difficulty', 'EASY')
+                        ->where('status', 'APPROVED')
+                        ->inRandomOrder()->limit($rule->easy)->pluck('id')->toArray();
+                    $selectedQuestionIds = array_merge($selectedQuestionIds, $ids);
+                }
+                if ($rule->medium > 0) {
+                    $ids = \App\Models\Question::where('subject_id', $rule->subject_id)
+                        ->where('difficulty', 'MEDIUM')
+                        ->where('status', 'APPROVED')
+                        ->inRandomOrder()->limit($rule->medium)->pluck('id')->toArray();
+                    $selectedQuestionIds = array_merge($selectedQuestionIds, $ids);
+                }
+                if ($rule->hard > 0) {
+                    $ids = \App\Models\Question::where('subject_id', $rule->subject_id)
+                        ->where('difficulty', 'HARD')
+                        ->where('status', 'APPROVED')
+                        ->inRandomOrder()->limit($rule->hard)->pluck('id')->toArray();
+                    $selectedQuestionIds = array_merge($selectedQuestionIds, $ids);
+                }
+            }
+
+            // 2. Attach new questions
+            shuffle($selectedQuestionIds);
+
+            $attachData = [];
+            foreach ($selectedQuestionIds as $index => $qid) {
+                $attachData[$qid] = ['pivot_order' => $index + 1];
+            }
+
+            if (!empty($attachData)) {
+                $exam->questions()->attach($attachData);
+            }
+
+            return redirect()->route('admin.exams.paper.index', $exam->id)
+                ->with('success', 'Exam created and question paper generated successfully.');
+        }
+
         return redirect()->route('admin.exams.index')
             ->with('success', 'Exam created successfully.');
     }
@@ -140,6 +187,54 @@ class ExamController extends Controller
                 }
             }
         });
+
+        if ($request->input('action') === 'save_and_generate') {
+            // 1. Clear existing questions (Specific to Update flow)
+            $exam->questions()->detach();
+
+            // 2. Fetch questions based on rules (Replicated logic)
+            $rules = $exam->rules;
+            $selectedQuestionIds = [];
+
+            foreach ($rules as $rule) {
+                if ($rule->easy > 0) {
+                    $ids = \App\Models\Question::where('subject_id', $rule->subject_id)
+                        ->where('difficulty', 'EASY')
+                        ->where('status', 'APPROVED')
+                        ->inRandomOrder()->limit($rule->easy)->pluck('id')->toArray();
+                    $selectedQuestionIds = array_merge($selectedQuestionIds, $ids);
+                }
+                if ($rule->medium > 0) {
+                    $ids = \App\Models\Question::where('subject_id', $rule->subject_id)
+                        ->where('difficulty', 'MEDIUM')
+                        ->where('status', 'APPROVED')
+                        ->inRandomOrder()->limit($rule->medium)->pluck('id')->toArray();
+                    $selectedQuestionIds = array_merge($selectedQuestionIds, $ids);
+                }
+                if ($rule->hard > 0) {
+                    $ids = \App\Models\Question::where('subject_id', $rule->subject_id)
+                        ->where('difficulty', 'HARD')
+                        ->where('status', 'APPROVED')
+                        ->inRandomOrder()->limit($rule->hard)->pluck('id')->toArray();
+                    $selectedQuestionIds = array_merge($selectedQuestionIds, $ids);
+                }
+            }
+
+            // 3. Attach new questions
+            shuffle($selectedQuestionIds);
+
+            $attachData = [];
+            foreach ($selectedQuestionIds as $index => $qid) {
+                $attachData[$qid] = ['pivot_order' => $index + 1];
+            }
+
+            if (!empty($attachData)) {
+                $exam->questions()->attach($attachData);
+            }
+
+            return redirect()->route('admin.exams.paper.index', $exam->id)
+                ->with('success', 'Exam updated and question paper regenerated successfully.');
+        }
 
         return redirect()->route('admin.exams.index')
             ->with('success', 'Exam updated successfully.');

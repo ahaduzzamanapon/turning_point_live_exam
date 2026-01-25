@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 mb-0 text-gray-800">Result Details</h1>
             <a href="{{ route('admin.results.index') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Back to List
+                <i class="fas fa-arrow-left"></i> Back to List
             </a>
         </div>
 
@@ -44,7 +44,8 @@
                     <div class="card-body d-flex align-items-center justify-content-center text-center p-5">
                         <div>
                             <div class="text-uppercase text-muted letter-spacing-2 mb-2">Total Score</div>
-                            <h1 class="display-1 fw-bold text-primary mb-0">{{ $attempt->score }}</h1>
+                            <h1 class="display-1 fw-bold text-primary mb-0" style="color: #ff0000 !important;">
+                                {{ $attempt->score }}</h1>
                             <div class="fs-4 text-muted">out of {{ $attempt->exam->total_marks }}</div>
                         </div>
                     </div>
@@ -55,7 +56,7 @@
         <!-- Question Analysis -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 fw-bold text-primary">Answer Analysis</h6>
+                <h6 class="m-0 fw-bold text-primary" style="color: #ff0000 !important;">Answer Analysis</h6>
             </div>
             <div class="card-body">
                 @foreach($attempt->answers as $index => $answer)
@@ -75,14 +76,14 @@
                                     $isCorrect = $option->is_correct;
 
                                     $class = "text-muted";
-                                    $icon = "bi bi-circle";
+                                    $icon = "far fa-circle";
 
                                     if ($isCorrect) {
                                         $class = "text-success fw-bold";
-                                        $icon = "bi bi-check-circle-fill";
+                                        $icon = "fas fa-check-circle";
                                     } elseif ($isSelected) {
                                         $class = "text-danger fw-bold";
-                                        $icon = "bi bi-x-circle-fill";
+                                        $icon = "fas fa-times-circle";
                                     }
                                 @endphp
                                 <div class="{{ $class }} mb-1">

@@ -8,7 +8,7 @@
                 <p class="text-muted small mb-0">Exam: <strong>{{ $exam->title }}</strong></p>
             </div>
             <a href="{{ route('admin.exams.index') }}" class="btn btn-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Back to Exams
+                <i class="fas fa-arrow-left"></i> Back to Exams
             </a>
         </div>
 
@@ -22,7 +22,7 @@
                             onsubmit="return confirm('This will replace ALL existing questions with a new set based on your rules. Continue?');">
                             @csrf
                             <button type="submit" class="btn btn-warning btn-sm fw-bold">
-                                <i class="bi bi-magic me-1"></i> Auto-Generate from Rules
+                                <i class="fas fa-magic me-1"></i> Auto-Generate from Rules
                             </button>
                         </form>
                     </div>
@@ -53,7 +53,7 @@
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm rounded-circle"
                                                         style="width: 32px; height: 32px; padding: 0;">
-                                                        <i class="bi bi-trash"></i>
+                                                        <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
                                             </td>
@@ -61,7 +61,7 @@
                                     @empty
                                         <tr>
                                             <td colspan="5" class="text-center py-5 text-muted">
-                                                <i class="bi bi-file-earmark-x display-4"></i>
+                                                <i class="fas fa-file-excel display-4"></i>
                                                 <p class="mt-2">No questions assigned to this paper yet.</p>
                                             </td>
                                         </tr>
@@ -103,7 +103,7 @@
                                 <p class="text-center text-muted small mt-3">Search to see available questions</p>
                             </div>
                             <button type="submit" class="btn btn-success w-100" id="btn-add-selected" disabled>
-                                <i class="bi bi-plus-circle me-1"></i> Add Selected
+                                <i class="fas fa-plus-circle me-1"></i> Add Selected
                             </button>
                         </form>
                     </div>
@@ -154,7 +154,7 @@
                 const count = document.querySelectorAll('.question-checkbox:checked').length;
                 const btn = document.getElementById('btn-add-selected');
                 btn.disabled = count === 0;
-                btn.innerHTML = `<i class="bi bi-plus-circle me-1"></i> Add Selected (${count})`;
+                btn.innerHTML = `<i class="fas fa-plus-circle me-1"></i> Add Selected (${count})`;
             }
         </script>
     @endpush

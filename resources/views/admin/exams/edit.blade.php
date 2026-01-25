@@ -97,8 +97,14 @@
                     <button type="button" class="btn btn-secondary btn-sm mb-3" id="add-rule">Add Rule</button>
 
                     <div class="mt-4">
-                        <button type="submit" class="btn btn-primary">Update Exam</button>
-                        <a href="{{ route('admin.exams.index') }}" class="btn btn-secondary">Cancel</a>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary" name="action" value="save">Update Exam</button>
+                            <button type="submit" class="btn btn-warning fw-bold text-dark" name="action"
+                                value="save_and_generate">
+                                <i class="fas fa-magic me-1"></i> Update & Generate Paper
+                            </button>
+                            <a href="{{ route('admin.exams.index') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -122,27 +128,27 @@
                     const div = document.createElement('div');
                     div.className = 'row g-2 mb-2 rule-row';
                     div.innerHTML = `
-                        <div class="col-md-4">
-                            <select class="form-control" name="rules[${index}][subject_id]" required>
-                                <option value="">Select Subject</option>
-                                @foreach($subjects as $subject)
-                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="number" class="form-control" name="rules[${index}][easy]" placeholder="Easy Qty" min="0" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="number" class="form-control" name="rules[${index}][medium]" placeholder="Med Qty" min="0" required>
-                        </div>
-                        <div class="col-md-2">
-                                <input type="number" class="form-control" name="rules[${index}][hard]" placeholder="Hard Qty" min="0" required>
-                        </div>
-                            <div class="col-md-2">
-                            <button class="btn btn-outline-danger w-100 remove-rule" type="button">Remove</button>
-                        </div>
-                    `;
+                                <div class="col-md-4">
+                                    <select class="form-control" name="rules[${index}][subject_id]" required>
+                                        <option value="">Select Subject</option>
+                                        @foreach($subjects as $subject)
+                                            <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" class="form-control" name="rules[${index}][easy]" placeholder="Easy Qty" min="0" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="number" class="form-control" name="rules[${index}][medium]" placeholder="Med Qty" min="0" required>
+                                </div>
+                                <div class="col-md-2">
+                                        <input type="number" class="form-control" name="rules[${index}][hard]" placeholder="Hard Qty" min="0" required>
+                                </div>
+                                    <div class="col-md-2">
+                                    <button class="btn btn-outline-danger w-100 remove-rule" type="button">Remove</button>
+                                </div>
+                            `;
                     container.appendChild(div);
                 });
 

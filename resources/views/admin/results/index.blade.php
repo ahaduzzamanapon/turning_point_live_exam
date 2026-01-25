@@ -30,14 +30,14 @@
                                     </td>
                                     <td>{{ $attempt->exam->title }}</td>
                                     <td>
-                                        <span class="badge bg-primary fs-6">{{ $attempt->score }} /
+                                        <span class="badge bg-danger fs-6">{{ $attempt->score }} /
                                             {{ $attempt->exam->total_marks }}</span>
                                     </td>
                                     <td>{{ $attempt->updated_at->format('M d, Y h:i A') }}</td>
                                     <td>
                                         <a href="{{ route('admin.results.show', $attempt->id) }}"
-                                            class="btn btn-sm btn-info text-white">
-                                            <i class="bi bi-eye"></i> View Details
+                                            class="btn btn-sm btn-outline-danger shadow-sm">
+                                            <i class="fas fa-eye"></i> View Details
                                         </a>
                                     </td>
                                 </tr>
