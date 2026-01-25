@@ -230,6 +230,8 @@
         background-color: rgba(255, 255, 255, 0.9);
         border-bottom: 1px solid rgba(0,0,0,0.03);
         padding: 0.75rem 1.5rem;
+        position: relative;
+        z-index: 50;
     }
 
     /* --- Custom Scrollbar --- */
@@ -266,7 +268,7 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        overflow: visible;
         background-color: #f3f4f6;
     }
 
