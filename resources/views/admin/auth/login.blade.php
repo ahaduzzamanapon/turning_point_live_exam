@@ -20,8 +20,8 @@
 
         .form-control:focus {
             background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.25);
-            border-color: #e53935;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.25);
+            border-color: #ff0000;
         }
 
         .transition-all:hover {
@@ -30,22 +30,22 @@
         }
 
         .bg-gradient-red {
-            background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
+            background: linear-gradient(135deg, #ff0000 0%, #b30000 100%);
         }
 
         .text-red {
-            color: #e53935 !important;
+            color: #ff0000 !important;
         }
 
         .btn-red {
-            background-color: #e53935;
-            border-color: #e53935;
+            background-color: #ff0000;
+            border-color: #ff0000;
             color: white;
         }
 
         .btn-red:hover {
-            background-color: #c62828;
-            border-color: #c62828;
+            background-color: #cc0000;
+            border-color: #cc0000;
             color: white;
         }
     </style>
