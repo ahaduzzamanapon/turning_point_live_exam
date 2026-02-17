@@ -37,6 +37,8 @@ Route::prefix('admin')->group(function () {
         // Exam Management Routes
         Route::resource('subjects', \App\Http\Controllers\Admin\SubjectController::class)->names('admin.subjects');
         Route::resource('topics', \App\Http\Controllers\Admin\TopicController::class)->names('admin.topics');
+        // Question Import
+        Route::post('questions/import', [\App\Http\Controllers\Admin\QuestionController::class, 'import'])->name('admin.questions.import');
         Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->names('admin.questions');
 
         // Exam Assignment

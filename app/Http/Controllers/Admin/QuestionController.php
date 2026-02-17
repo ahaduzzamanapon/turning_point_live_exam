@@ -12,6 +12,79 @@ use Illuminate\Support\Facades\DB;
 
 class QuestionController extends Controller
 {
+    public function import(Request $request)
+    {
+        $request->validate([
+            'json_file' => 'required|file|mimes:json'
+        ]);
+
+        $file = $request->file('json_file');
+        $jsonContent = file_get_contents($file->getRealPath());
+        $questionsData = json_decode($jsonContent, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return back()->withErrors(['json_file' => 'Invalid JSON format: ' . json_last_error_msg()]);
+        }
+
+        // Handle wrapped JSON structure (e.g. { "questions": [...] })
+        if (isset($questionsData['questions']) && is_array($questionsData['questions'])) {
+            $questionsData = $questionsData['questions'];
+        }
+
+        if (!is_array($questionsData)) {
+            return back()->withErrors(['json_file' => 'JSON must be an array of questions.']);
+        }
+
+        \Illuminate\Support\Facades\Log::info('Starting import of ' . count($questionsData) . ' questions.');
+
+        DB::transaction(function () use ($questionsData) {
+            foreach ($questionsData as $index => $data) {
+                // validation for required fields in JSON
+                if (!isset($data['category'], $data['question'], $data['options'], $data['answer'])) {
+                    \Illuminate\Support\Facades\Log::warning("Skipping invalid question at index $index", $data);
+                    continue; // Skip invalid entries or log them
+                }
+
+                \Illuminate\Support\Facades\Log::info("Processing question: " . substr($data['question'], 0, 30));
+
+                // Check for duplicates
+                if (Question::where('question_text', $data['question'])->exists()) {
+                    \Illuminate\Support\Facades\Log::info("Skipping duplicate question: " . substr($data['question'], 0, 30));
+                    continue;
+                }
+
+                // Find or Create Subject
+                $subject = Subject::firstOrCreate(
+                    ['name' => $data['category']],
+                    ['status' => true] // Default active if creating new
+                );
+
+                // Create Question
+                $question = Question::create([
+                    'subject_id' => $subject->id,
+                    'topic_id' => null, // Optional
+                    'question_text' => $data['question'],
+                    'question_type' => 'SINGLE', // Defaulting to SINGLE for this format
+                    'difficulty' => 'MEDIUM', // Default
+                    'negative_mark' => 0,
+                    'status' => 'APPROVED',
+                    'answer_explanation' => null
+                ]);
+
+                // Create Options
+                foreach ($data['options'] as $optionText) {
+                    QuestionOption::create([
+                        'question_id' => $question->id,
+                        'option_text' => $optionText,
+                        'is_correct' => ($optionText === $data['answer'])
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->back()->with('success', 'Questions imported successfully.');
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -22,6 +22,11 @@ class EvaluationService
 
             foreach ($answers as $answer) {
                 $question = $answer->question;
+
+                if (!$question) {
+                    continue; // Skip if question no longer exists
+                }
+
                 $selectedOptionIds = $answer->selected_options ?? [];
 
                 // Ensure selected_options is an array (it might be null or json decoded)

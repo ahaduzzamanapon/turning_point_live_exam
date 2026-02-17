@@ -3,8 +3,12 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Questions</h1>
-            <a href="{{ route('admin.questions.create') }}" class="btn btn-primary">Add New Question</a>
+            <div>
+                <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#importModal">
+                    <i class="fas fa-file-import"></i> Import JSON
+                </button>
+                <a href="{{ route('admin.questions.create') }}" class="btn btn-primary">Add New Question</a>
+            </div>
         </div>
 
         @if(session('success'))
@@ -20,7 +24,7 @@
                     <table class="table table-bordered" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>SL</th>
                                 <th>Question</th>
                                 <th>Subject / Topic</th>
                                 <th>Type</th>
@@ -31,7 +35,7 @@
                         <tbody>
                             @forelse($questions as $question)
                                 <tr>
-                                    <td>{{ $question->id }}</td>
+                                    <td>{{ $questions->firstItem() + $loop->index }}</td>
                                     <td>{{ Str::limit($question->question_text, 50) }}</td>
                                     <td>
                                         {{ $question->subject->name }} <br>
@@ -68,6 +72,44 @@
                     </table>
                 </div>
                 {{ $questions->links() }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('admin.questions.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importModalLabel">Import Questions from JSON</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="json_file" class="form-label">Select JSON File</label>
+                            <input type="file" class="form-control" id="json_file" name="json_file" accept=".json" required>
+                        </div>
+                        <div class="alert alert-info">
+                            <small>
+                                File must be a valid JSON with structure:
+                                <pre>[
+          {
+            "category": "Subject Name",
+            "question": "Question Text",
+            "options": ["Opt1", "Opt2", ...],
+            "answer": "Correct Opt"
+          }
+        ]</pre>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

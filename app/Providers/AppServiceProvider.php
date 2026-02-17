@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Pagination\Paginator::useBootstrapFive();
+
         \Illuminate\Support\Facades\View::composer('admin.layouts.sidebar', function ($view) {
             $view->with('menus', \App\Models\Menu::whereNull('parent_id')->with('children')->orderBy('order')->get());
         });
