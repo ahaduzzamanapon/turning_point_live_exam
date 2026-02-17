@@ -63,6 +63,9 @@ class StudentApiController extends Controller
                 $event->is_registered = $participant ? true : false;
                 $event->participant_status = $participant ? $participant->pivot->status : null;
                 $event->participant_id = $participant ? $participant->pivot->id : null;
+                $event->my_rank = $participant ? $participant->pivot->rank : null;
+                $event->my_score = $participant ? $participant->pivot->score : null;
+                $event->my_prize = $participant ? $participant->pivot->prize_won : null;
                 return $event;
             });
 
