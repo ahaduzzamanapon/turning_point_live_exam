@@ -29,15 +29,15 @@
 
                         <!-- Background: Image or Gradient -->
                         <div class="poster-bg position-absolute w-100 h-100" style="
-                                        @if($event->poster_image)
-                                            background-image: url('{{ asset('storage/' . $event->poster_image) }}');
-                                        @else
-                                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                        @endif
-                                        background-size: cover; 
-                                        background-position: center;
-                                        transition: transform 0.5s;
-                                     ">
+                                                @if($event->poster_image)
+                                                    background-image: url('{{ asset('storage/' . $event->poster_image) }}');
+                                                @else
+                                                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                                @endif
+                                                background-size: cover; 
+                                                background-position: center;
+                                                transition: transform 0.5s;
+                                             ">
                             <!-- Overlay for readability -->
                             <div class="position-absolute w-100 h-100" style="background: rgba(0,0,0,0.6);"></div>
                         </div>
@@ -86,74 +86,81 @@
                             </div>
 
                             <!-- Action Button -->
-                            <button type="button" class="btn btn-light fw-bold w-100 py-2 shadow-lg hover-scale"
-                                data-bs-toggle="modal" data-bs-target="#joinEventModal{{ $event->id }}">
-                                REGISTER NOW <i class="fas fa-arrow-right ms-2"></i>
-                            </button>
+                            @if(auth()->user()->events->contains($event->id))
+                                <button type="button" class="btn btn-success fw-bold w-100 py-2 shadow-lg" disabled>
+                                    <i class="fas fa-check-circle me-2"></i> REGISTERED
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-light fw-bold w-100 py-2 shadow-lg hover-scale"
+                                    data-bs-toggle="modal" data-bs-target="#joinEventModal{{ $event->id }}">
+                                    REGISTER NOW <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
 
                 <!-- Join Modal (Unchanged Logic, mostly) -->
-                <div class="modal fade" id="joinEventModal{{ $event->id }}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content border-0 shadow-lg">
-                            <div class="modal-header bg-primary text-white">
-                                <h5 class="modal-title fw-bold">
-                                    <i class="fas fa-ticket-alt me-2"></i> Event Registration
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <h5 class="text-center mb-4 fw-bold text-dark">{{ $event->title }}</h5>
-
-                                <div class="card bg-light border-0 mb-4">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span class="text-muted">Entry Fee:</span>
-                                            <span class="fw-bold">৳ {{ number_format($event->registration_fee, 2) }}</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <span class="text-muted">Your Wallet Balance:</span>
-                                            <span
-                                                class="fw-bold {{ (auth()->user()->wallet->balance ?? 0) < $event->registration_fee ? 'text-danger' : 'text-success' }}">
-                                                ৳ {{ number_format(auth()->user()->wallet->balance ?? 0, 2) }}
-                                            </span>
-                                        </div>
-                                    </div>
+                @if(!auth()->user()->events->contains($event->id))
+                    <div class="modal fade" id="joinEventModal{{ $event->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title fw-bold">
+                                        <i class="fas fa-ticket-alt me-2"></i> Event Registration
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
+                                <div class="modal-body p-4">
+                                    <h5 class="text-center mb-4 fw-bold text-dark">{{ $event->title }}</h5>
 
-                                @if((auth()->user()->wallet->balance ?? 0) < $event->registration_fee)
-                                    <div class="alert alert-danger d-flex align-items-center">
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                        <div>Insufficient Funds. <a href="{{ route('student.wallet.index') }}"
-                                                class="alert-link">Add Money</a></div>
+                                    <div class="card bg-light border-0 mb-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span class="text-muted">Entry Fee:</span>
+                                                <span class="fw-bold">৳ {{ number_format($event->registration_fee, 2) }}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted">Your Wallet Balance:</span>
+                                                <span
+                                                    class="fw-bold {{ (auth()->user()->wallet->balance ?? 0) < $event->registration_fee ? 'text-danger' : 'text-success' }}">
+                                                    ৳ {{ number_format(auth()->user()->wallet->balance ?? 0, 2) }}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                @else
-                                    <div class="alert alert-info d-flex align-items-center">
-                                        <i class="fas fa-info-circle me-2"></i>
-                                        <div>Fee will be deducted from your wallet immediately.</div>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="modal-footer border-0 pt-0 pb-4 px-4">
-                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                                @if((auth()->user()->wallet->balance ?? 0) >= $event->registration_fee)
-                                    <form action="{{ route('student.events.join', $event->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-primary px-4 fw-bold">Confirm Payment</button>
-                                    </form>
-                                @else
-                                    <a href="{{ route('student.wallet.index') }}" class="btn btn-success px-4 fw-bold">
-                                        <i class="fas fa-plus-circle me-1"></i> Recharge Wallet
-                                    </a>
-                                @endif
+
+                                    @if((auth()->user()->wallet->balance ?? 0) < $event->registration_fee)
+                                        <div class="alert alert-danger d-flex align-items-center">
+                                            <i class="fas fa-exclamation-circle me-2"></i>
+                                            <div>Insufficient Funds. <a href="{{ route('student.wallet.index') }}"
+                                                    class="alert-link">Add Money</a></div>
+                                        </div>
+                                    @else
+                                        <div class="alert alert-info d-flex align-items-center">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            <div>Fee will be deducted from your wallet immediately.</div>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    @if((auth()->user()->wallet->balance ?? 0) >= $event->registration_fee)
+                                        <form action="{{ route('student.events.join', $event->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary px-4 fw-bold">Confirm Payment</button>
+                                        </form>
+                                    @else
+                                        <a href="{{ route('student.wallet.index') }}" class="btn btn-success px-4 fw-bold">
+                                            <i class="fas fa-plus-circle me-1"></i> Recharge Wallet
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
+                @endif
             @empty
                 <div class="col-12 text-center py-5">
                     <div class="text-muted opacity-50">

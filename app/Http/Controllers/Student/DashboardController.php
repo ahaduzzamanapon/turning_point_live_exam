@@ -16,7 +16,7 @@ class DashboardController extends Controller
 
         // Stats
         $availableExamsCount = Exam::where('status', 'PUBLISHED')->count();
-        $upcomingEventsCount = Event::where('status', 'PUBLISHED')
+        $upcomingEventsCount = Event::whereIn('status', ['UPCOMING', 'LIVE'])
             ->where('start_time', '>', now())
             ->count();
 
