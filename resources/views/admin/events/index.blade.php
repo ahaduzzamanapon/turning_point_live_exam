@@ -54,18 +54,40 @@
                                     <td>৳ {{ number_format($event->registration_fee, 0) }}</td>
                                     <td>
                                         @php
-                                            $badges = [
-                                                'UPCOMING' => 'bg-info',
-                                                'LIVE' => 'bg-success',
-                                                'COMPLETED' => 'bg-secondary',
-                                                'CANCELLED' => 'bg-danger'
-                                            ];
+                                            $currentStatus = $event->status;
+                                            $badgeClass = 'bg-secondary';
+
+                                            // Dynamic Status Check
+                                            if ($currentStatus === 'UPCOMING' && now()->between($event->start_time, $event->end_time)) {
+                                                $currentStatus = 'LIVE';
+                                            } elseif ($currentStatus === 'UPCOMING' && now()->gt($event->end_time)) {
+                                                $currentStatus = 'COMPLETED';
+                                            }
+
+                                            switch ($currentStatus) {
+                                                case 'UPCOMING':
+                                                    $badgeClass = 'badge bg-info';
+                                                    break;
+                                                case 'LIVE':
+                                                    $badgeClass = 'badge bg-success';
+                                                    break;
+                                                case 'COMPLETED':
+                                                    $badgeClass = 'badge bg-secondary';
+                                                    break;
+                                                case 'CANCELLED':
+                                                    $badgeClass = 'badge bg-danger';
+                                                    break;
+                                            }
                                         @endphp
-                                        <span class="badge {{ $badges[$event->status] ?? 'bg-secondary' }}">
-                                            {{ $event->status }}
+                                        <span class="{{ $badgeClass }}">
+                                            {{ $currentStatus }}
                                         </span>
                                     </td>
                                     <td>
+                                        <a href="{{ route('admin.events.results', $event->id) }}" class="btn btn-sm btn-info"
+                                            title="View Results & Distribute Prizes">
+                                            <i class="fas fa-trophy"></i>
+                                        </a>
                                         <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-sm btn-primary">
                                             <i class="fas fa-edit"></i>
                                         </a>

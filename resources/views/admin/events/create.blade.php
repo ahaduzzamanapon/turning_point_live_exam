@@ -79,10 +79,26 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Prize Pool Config (JSON)</label>
-                                <textarea name="prize_pool_json" class="form-control" rows="5"
-                                    placeholder='{"1": 1000, "2": 500, "3": 200}'>{{ old('prize_pool_json') }}</textarea>
-                                <small class="text-muted">Format: {"Rank": Amount}</small>
+                                <label class="form-label">Prize Pool Configuration</label>
+                                <div id="prize-pool-container">
+                                    <div class="d-flex mb-2 gap-2">
+                                        <input type="text" name="prize_pool[0][rank]" class="form-control"
+                                            placeholder="Rank (e.g. 1 or 1-3)" required>
+                                        <input type="number" name="prize_pool[0][amount]" class="form-control"
+                                            placeholder="Amount" required>
+                                        <button type="button" class="btn btn-danger btn-sm remove-prize-row"
+                                            disabled>-</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-success mt-1" id="add-prize-row">
+                                    <i class="fas fa-plus"></i> Add Prize Row
+                                </button>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> <strong>Question Paper:</strong>
+                                Questions will be auto-generated based on "Total Marks" immediately after you create the
+                                event. You can then modify, add, or remove questions in the next step.
                             </div>
                         </div>
                     </div>
@@ -95,4 +111,41 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let prizeIndex = 1;
+            const container = document.getElementById('prize-pool-container');
+            const addButton = document.getElementById('add-prize-row');
+
+            addButton.addEventListener('click', function () {
+                const row = document.createElement('div');
+                row.className = 'd-flex mb-2 gap-2';
+                row.innerHTML = `
+                            <input type="text" name="prize_pool[${prizeIndex}][rank]" class="form-control" placeholder="Rank" required>
+                            <input type="number" name="prize_pool[${prizeIndex}][amount]" class="form-control" placeholder="Amount" required>
+                            <button type="button" class="btn btn-danger btn-sm remove-prize-row">-</button>
+                        `;
+                container.appendChild(row);
+                prizeIndex++;
+                updateRemoveButtons();
+            });
+
+            container.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-prize-row')) {
+                    e.target.parentElement.remove();
+                    updateRemoveButtons();
+                }
+            });
+
+            function updateRemoveButtons() {
+                const buttons = container.querySelectorAll('.remove-prize-row');
+                if (buttons.length === 1) {
+                    buttons[0].disabled = true;
+                } else {
+                    buttons.forEach(btn => btn.disabled = false);
+                }
+            }
+        });
+    </script>
 @endsection

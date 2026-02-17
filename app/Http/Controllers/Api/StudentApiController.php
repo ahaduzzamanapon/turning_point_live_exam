@@ -59,7 +59,10 @@ class StudentApiController extends Controller
             ->orderBy('start_time')
             ->get()
             ->map(function ($event) use ($request) {
-                $event->is_registered = $request->user()->events()->where('event_id', $event->id)->exists();
+                $participant = $request->user()->events()->where('event_id', $event->id)->first();
+                $event->is_registered = $participant ? true : false;
+                $event->participant_status = $participant ? $participant->pivot->status : null;
+                $event->participant_id = $participant ? $participant->pivot->id : null;
                 return $event;
             });
 
@@ -104,5 +107,120 @@ class StudentApiController extends Controller
     public function wallet(Request $request)
     {
         return response()->json($request->user()->wallet);
+    }
+
+    public function enterEvent(Request $request, $id)
+    {
+        $user = $request->user();
+        $event = Event::findOrFail($id);
+
+        // 1. Check Registration
+        $participant = \App\Models\EventParticipant::where('user_id', $user->id)
+            ->where('event_id', $event->id)
+            ->first();
+
+        if (!$participant) {
+            return response()->json(['message' => 'You must register for this event first.'], 403);
+        }
+
+        // 2. Check Time
+        $now = now();
+        if ($now->lt($event->start_time)) {
+            return response()->json(['message' => 'Event has not started yet.'], 403);
+        }
+        if ($now->gt($event->end_time)) {
+            return response()->json(['message' => 'Event has ended.'], 403);
+        }
+
+        if ($participant->status === 'COMPLETED') {
+            return response()->json(['message' => 'You have already completed this event.'], 403);
+        }
+
+        // 3. Load Questions & State
+        $remainingSeconds = $now->diffInSeconds($event->end_time, false);
+
+        $questions = $event->questions;
+
+        // Self-healing: If no questions, assign them now (for old events or failures)
+        if ($questions->isEmpty()) {
+            $questionsCount = $event->total_marks > 0 ? $event->total_marks : 10;
+            $newQuestions = \App\Models\Question::where('status', 'APPROVED')
+                ->inRandomOrder()
+                ->limit($questionsCount)
+                ->get();
+
+            if ($newQuestions->isNotEmpty()) {
+                $pivotData = [];
+                foreach ($newQuestions as $index => $q) {
+                    $pivotData[$q->id] = ['order' => $index + 1];
+                }
+                $event->questions()->attach($pivotData);
+                $event->refresh();
+                $questions = $event->questions;
+            }
+        }
+
+        $existingAnswers = \App\Models\EventAnswer::where('event_participant_id', $participant->id)
+            ->get()
+            ->keyBy('question_id');
+
+        $questionsWithState = $questions->map(function ($q) use ($existingAnswers) {
+            $answer = $existingAnswers->get($q->id);
+            $q->selected_options = $answer ? $answer->selected_options : [];
+            // Hide is_correct/correct_options if they exist in serialization
+            $q->makeHidden(['is_correct', 'correct_options', 'explanation']);
+            return $q;
+        });
+
+        return response()->json([
+            'event' => $event,
+            'participant' => $participant,
+            'questions' => $questionsWithState,
+            'remaining_seconds' => max(0, $remainingSeconds)
+        ]);
+    }
+
+    public function submitEventAnswer(Request $request, $participantId)
+    {
+        $participant = \App\Models\EventParticipant::findOrFail($participantId);
+        if ($participant->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($participant->status === 'COMPLETED') {
+            return response()->json(['message' => 'Event already submitted'], 400);
+        }
+
+        $questionId = $request->input('question_id');
+        $selectedOptions = $request->input('selected_options'); // Array
+
+        \App\Models\EventAnswer::updateOrCreate(
+            [
+                'event_participant_id' => $participant->id,
+                'question_id' => $questionId
+            ],
+            [
+                'selected_options' => $selectedOptions
+            ]
+        );
+
+        return response()->json(['success' => true]);
+    }
+
+    public function finishEvent(Request $request, $participantId)
+    {
+        $participant = \App\Models\EventParticipant::findOrFail($participantId);
+        if ($participant->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $participant->status = 'COMPLETED';
+        $participant->save();
+
+        if (now()->lt($participant->event->end_time)) {
+            return response()->json(['success' => true, 'message' => 'Event submitted successfully! Waiting for results.']);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Event submitted successfully!']);
     }
 }

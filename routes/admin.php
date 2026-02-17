@@ -63,6 +63,17 @@ Route::prefix('admin')->group(function () {
         Route::post('wallet/add', [\App\Http\Controllers\Admin\WalletController::class, 'addMoney'])->name('admin.wallet.add');
 
         // Event Management
+        Route::get('events/{event}/results', [\App\Http\Controllers\Admin\EventController::class, 'results'])->name('admin.events.results');
+        Route::post('events/{event}/distribute-prizes', [\App\Http\Controllers\Admin\EventController::class, 'distributePrizes'])->name('admin.events.distribute');
+
+        // Event Paper
+        Route::get('events/{event}/paper', [\App\Http\Controllers\Admin\EventPaperController::class, 'index'])->name('admin.events.paper.index');
+        Route::post('events/{event}/paper/store', [\App\Http\Controllers\Admin\EventPaperController::class, 'store'])->name('admin.events.paper.store');
+        Route::post('events/{event}/paper/auto-generate', [\App\Http\Controllers\Admin\EventPaperController::class, 'autoGenerate'])->name('admin.events.paper.auto');
+        Route::post('events/{event}/paper/reorder', [\App\Http\Controllers\Admin\EventPaperController::class, 'reorder'])->name('admin.events.paper.reorder');
+        Route::delete('events/{event}/paper/{question}', [\App\Http\Controllers\Admin\EventPaperController::class, 'destroy'])->name('admin.events.paper.destroy');
+        Route::get('events/paper/search', [\App\Http\Controllers\Admin\EventPaperController::class, 'search'])->name('admin.events.paper.search');
+
         Route::resource('events', \App\Http\Controllers\Admin\EventController::class)->names('admin.events');
 
         require base_path('routes/crud.php');

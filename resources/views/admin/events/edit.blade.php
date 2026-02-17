@@ -98,14 +98,53 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Prize Pool Config (JSON)</label>
-                                <textarea name="prize_pool_json" class="form-control"
-                                    rows="5">{{ old('prize_pool_json', json_encode($event->prize_pool_config)) }}</textarea>
+                                <label class="form-label">Prize Pool Configuration</label>
+                                <div id="prize-pool-container">
+                                    @php
+                                        $prizeConfig = $event->prize_pool_config ?? [];
+                                        // Normalize if it's Key-Value or Array of Objects
+                                        $normalizedConfig = [];
+                                        if (is_array($prizeConfig)) {
+                                            foreach ($prizeConfig as $key => $val) {
+                                                if (is_array($val)) {
+                                                    $normalizedConfig[] = $val;
+                                                } else {
+                                                    $normalizedConfig[] = ['rank' => $key, 'amount' => $val];
+                                                }
+                                            }
+                                        }
+                                    @endphp
+
+                                    @forelse($normalizedConfig as $index => $item)
+                                        <div class="d-flex mb-2 gap-2">
+                                            <input type="text" name="prize_pool[{{ $index }}][rank]" class="form-control"
+                                                placeholder="Rank (e.g. 1 or 1-3)" value="{{ $item['rank'] ?? '' }}" required>
+                                            <input type="number" name="prize_pool[{{ $index }}][amount]" class="form-control"
+                                                placeholder="Amount" value="{{ $item['amount'] ?? '' }}" required>
+                                            <button type="button" class="btn btn-danger btn-sm remove-prize-row">-</button>
+                                        </div>
+                                    @empty
+                                        <div class="d-flex mb-2 gap-2">
+                                            <input type="text" name="prize_pool[0][rank]" class="form-control"
+                                                placeholder="Rank (e.g. 1 or 1-3)" required>
+                                            <input type="number" name="prize_pool[0][amount]" class="form-control"
+                                                placeholder="Amount" required>
+                                            <button type="button" class="btn btn-danger btn-sm remove-prize-row"
+                                                disabled>-</button>
+                                        </div>
+                                    @endforelse
+                                </div>
+                                <button type="button" class="btn btn-sm btn-success mt-1" id="add-prize-row">
+                                    <i class="fas fa-plus"></i> Add Prize Row
+                                </button>
                             </div>
                         </div>
                     </div>
 
                     <div class="border-top pt-3 text-end">
+                        <a href="{{ route('admin.events.paper.index', $event->id) }}" class="btn btn-info me-2">
+                            <i class="fas fa-file-alt"></i> Manage Questions ({{ $event->questions->count() }})
+                        </a>
                         <a href="{{ route('admin.events.index') }}" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Update Event</button>
                     </div>
@@ -113,4 +152,44 @@
             </div>
         </div>
     </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let prizeIndex = {{ count($normalizedConfig) > 0 ? count($normalizedConfig) : 1 }};
+            const container = document.getElementById('prize-pool-container');
+            const addButton = document.getElementById('add-prize-row');
+
+            updateRemoveButtons(); // Init checks
+
+            addButton.addEventListener('click', function () {
+                const row = document.createElement('div');
+                row.className = 'd-flex mb-2 gap-2';
+                row.innerHTML = `
+                            <input type="text" name="prize_pool[${prizeIndex}][rank]" class="form-control" placeholder="Rank" required>
+                            <input type="number" name="prize_pool[${prizeIndex}][amount]" class="form-control" placeholder="Amount" required>
+                            <button type="button" class="btn btn-danger btn-sm remove-prize-row">-</button>
+                        `;
+                container.appendChild(row);
+                prizeIndex++;
+                updateRemoveButtons();
+            });
+
+            container.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-prize-row')) {
+                    e.target.parentElement.remove();
+                    updateRemoveButtons();
+                }
+            });
+
+            function updateRemoveButtons() {
+                const buttons = container.querySelectorAll('.remove-prize-row');
+                if (buttons.length === 1) {
+                    buttons[0].disabled = true;
+                } else {
+                    buttons.forEach(btn => btn.disabled = false);
+                }
+            }
+        });
+    </script>
 @endsection

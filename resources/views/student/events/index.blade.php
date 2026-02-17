@@ -29,15 +29,15 @@
 
                         <!-- Background: Image or Gradient -->
                         <div class="poster-bg position-absolute w-100 h-100" style="
-                                                @if($event->poster_image)
-                                                    background-image: url('{{ asset('storage/' . $event->poster_image) }}');
-                                                @else
-                                                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                                @endif
-                                                background-size: cover; 
-                                                background-position: center;
-                                                transition: transform 0.5s;
-                                             ">
+                                                                                        @if($event->poster_image)
+                                                                                            background-image: url('{{ asset('storage/' . $event->poster_image) }}');
+                                                                                        @else
+                                                                                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                                                                        @endif
+                                                                                        background-size: cover; 
+                                                                                        background-position: center;
+                                                                                        transition: transform 0.5s;
+                                                                                     ">
                             <!-- Overlay for readability -->
                             <div class="position-absolute w-100 h-100" style="background: rgba(0,0,0,0.6);"></div>
                         </div>
@@ -80,16 +80,49 @@
                                         <small class="text-uppercase text-white-50 d-block" style="font-size: 0.7rem;">Prize
                                             Pool</small>
                                         <span class="fw-bold fs-5 text-warning">৳
-                                            {{ number_format(collect($event->prize_pool_config)->sum(), 0) }}</span>
+                                            {{ number_format(collect($event->prize_pool_config)->sum('amount'), 0) }}</span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Action Button -->
                             @if(auth()->user()->events->contains($event->id))
-                                <button type="button" class="btn btn-success fw-bold w-100 py-2 shadow-lg" disabled>
-                                    <i class="fas fa-check-circle me-2"></i> REGISTERED
-                                </button>
+                                @php
+                                    $pivot = auth()->user()->events->find($event->id)->pivot;
+                                @endphp
+
+                                @if($pivot->status === 'COMPLETED')
+                                    @if(now()->lt($event->end_time))
+                                        <button type="button" class="btn btn-secondary w-100 py-2 shadow-sm" disabled>
+                                            <i class="fas fa-hourglass-half me-2"></i> WAITING FOR RESULT
+                                        </button>
+                                        <small class="d-block text-center mt-1 text-muted" style="font-size: 0.75rem;">
+                                            Results available after {{ $event->end_time->format('h:i A') }}
+                                        </small>
+                                    @else
+                                        <a href="{{ route('student.events.result', $pivot->id) }}"
+                                            class="btn btn-info fw-bold w-100 py-2 shadow-lg">
+                                            <i class="fas fa-poll me-2"></i> VIEW RESULT
+                                        </a>
+                                    @endif
+                                @else
+                                    <!-- Not Completed Yet -->
+                                    @if($event->status === 'LIVE' || ($event->status === 'UPCOMING' && now()->between($event->start_time, $event->end_time)))
+                                        <!-- Event is Live -->
+                                        <form action="{{ route('student.events.enter', $event->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                class="btn btn-warning fw-bold w-100 py-2 shadow-lg hover-scale text-dark">
+                                                <i class="fas fa-play-circle me-2"></i> ENTER EVENT
+                                            </button>
+                                        </form>
+                                    @else
+                                        <!-- Event Upcoming or Ended (and not attempted) -->
+                                        <button type="button" class="btn btn-success fw-bold w-100 py-2 shadow-lg" disabled>
+                                            <i class="fas fa-check-circle me-2"></i> REGISTERED
+                                        </button>
+                                    @endif
+                                @endif
                             @else
                                 <button type="button" class="btn btn-light fw-bold w-100 py-2 shadow-lg hover-scale"
                                     data-bs-toggle="modal" data-bs-target="#joinEventModal{{ $event->id }}">

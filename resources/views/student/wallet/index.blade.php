@@ -31,15 +31,22 @@
                                     @forelse($transactions as $txn)
                                         <tr>
                                             <td>{{ $txn->created_at->format('d M Y, h:i A') }}</td>
-                                            <td>{{ $txn->description }}</td>
                                             <td>
-                                                @if($txn->type == 'CREDIT')
-                                                    <span class="badge bg-success">Credit</span>
-                                                @else
-                                                    <span class="badge bg-danger">Debit</span>
+                                                {{ $txn->description }}
+                                                @if(str_contains($txn->description, 'Event Registration'))
+                                                    <!-- Optional: Link to Event -->
+                                                @elseif(str_contains($txn->description, 'Prize'))
+                                                    <i class="fas fa-trophy text-warning ms-1"></i>
                                                 @endif
                                             </td>
-                                            <td class="{{ $txn->type == 'CREDIT' ? 'text-success' : 'text-danger' }}">
+                                            <td>
+                                                @if($txn->type == 'CREDIT')
+                                                    <span class="badge bg-success rounded-pill px-3">Credit</span>
+                                                @else
+                                                    <span class="badge bg-danger rounded-pill px-3">Debit</span>
+                                                @endif
+                                            </td>
+                                            <td class="fw-bold {{ $txn->type == 'CREDIT' ? 'text-success' : 'text-danger' }}">
                                                 {{ $txn->type == 'CREDIT' ? '+' : '-' }} ৳ {{ number_format($txn->amount, 2) }}
                                             </td>
                                         </tr>

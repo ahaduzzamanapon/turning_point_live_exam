@@ -44,6 +44,11 @@ Route::middleware(['auth', 'verified'])->prefix('student')->name('student.')->gr
     // Events
     Route::get('/events', [App\Http\Controllers\Student\EventController::class, 'index'])->name('events.index');
     Route::post('/events/{event}/join', [App\Http\Controllers\Student\EventController::class, 'join'])->name('events.join');
+    Route::post('/events/{event}/enter', [App\Http\Controllers\Student\EventController::class, 'enter'])->name('events.enter');
+    Route::get('/events/exam/{participant}/live', [App\Http\Controllers\Student\EventController::class, 'live'])->name('events.live');
+    Route::post('/events/exam/{participant}/submit', [App\Http\Controllers\Student\EventController::class, 'submitAnswer'])->name('events.submit');
+    Route::post('/events/exam/{participant}/finish', [App\Http\Controllers\Student\EventController::class, 'finish'])->name('events.finish');
+    Route::get('/events/exam/{participant}/result', [App\Http\Controllers\Student\EventController::class, 'result'])->name('events.result');
 });
 
 Route::redirect('/admin', '/admin/login');

@@ -32,5 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/student/exams', [StudentApiController::class, 'exams']);
     Route::get('/student/events', [StudentApiController::class, 'events']);
     Route::post('/student/events/{id}/join', [StudentApiController::class, 'joinEvent']);
+    Route::post('/student/events/{id}/enter', [StudentApiController::class, 'enterEvent']);
+    Route::post('/student/events/exam/{participantId}/submit', [StudentApiController::class, 'submitEventAnswer']);
+    Route::post('/student/events/exam/{participantId}/finish', [StudentApiController::class, 'finishEvent']);
     Route::get('/student/wallet', [StudentApiController::class, 'wallet']);
 });

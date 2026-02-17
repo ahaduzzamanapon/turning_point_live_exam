@@ -49,6 +49,6 @@ class Event extends Model
         // Let's create `event_questions` pivot table now to be safe and standard.
         return $this->belongsToMany(Question::class, 'event_questions', 'event_id', 'question_id')
             ->withPivot('order')
-            ->orderBy('pivot_order');
+            ->orderBy('event_questions.order');
     }
 }
