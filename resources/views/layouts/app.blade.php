@@ -197,10 +197,27 @@
                     <i class="fas fa-graduation-cap fa-3x mb-2"></i>
                 </div>
                 <ul class="components">
+                    <li class="{{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('student.dashboard') }}">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
                     <li
                         class="{{ request()->routeIs('student.exams.*') || request()->is('student/exams') ? 'active' : '' }}">
                         <a href="{{ route('student.exams.index') }}">
                             <i class="fas fa-file-alt"></i> Exams
+                        </a>
+                    </li>
+                    </a>
+                    </li>
+                    <li class="{{ request()->routeIs('student.wallet.index') ? 'active' : '' }}">
+                        <a href="{{ route('student.wallet.index') }}">
+                            <i class="fas fa-wallet"></i> Wallet
+                        </a>
+                    </li>
+                    <li class="{{ request()->routeIs('student.events.*') ? 'active' : '' }}">
+                        <a href="{{ route('student.events.index') }}">
+                            <i class="fas fa-calendar-alt"></i> Events
                         </a>
                     </li>
                     <!-- Add more links here later -->
@@ -235,10 +252,25 @@
     <!-- Mobile Bottom Nav -->
     @auth
         <div class="bottom-navbar">
+            <a href="{{ route('student.dashboard') }}"
+                class="nav-item {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
             <a href="{{ route('student.exams.index') }}"
                 class="nav-item {{ request()->routeIs('student.exams.*') ? 'active' : '' }}">
                 <i class="fas fa-file-alt"></i>
                 <span>Exams</span>
+            </a>
+            <a href="{{ route('student.events.index') }}"
+                class="nav-item {{ request()->routeIs('student.events.*') ? 'active' : '' }}">
+                <i class="fas fa-calendar-check"></i>
+                <span>Events</span>
+            </a>
+            <a href="{{ route('student.wallet.index') }}"
+                class="nav-item {{ request()->routeIs('student.wallet.index') ? 'active' : '' }}">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
             </a>
             <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-item">
                 <i class="fas fa-sign-out-alt"></i>

@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('student.dashboard');
+    }
     return redirect()->route('login');
 });
 
@@ -27,12 +30,20 @@ Route::post('/email/resend', [App\Http\Controllers\Auth\VerificationController::
 
 // Student Exam Routes (Protected by auth AND verified)
 Route::middleware(['auth', 'verified'])->prefix('student')->name('student.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/exams', [App\Http\Controllers\Student\ExamController::class, 'index'])->name('exams.index');
     Route::post('/exams/{exam}/start', [App\Http\Controllers\Student\ExamController::class, 'start'])->name('exams.start');
     Route::get('/exam/{attempt}/live', [App\Http\Controllers\Student\ExamController::class, 'live'])->name('exams.live');
     Route::post('/exam/{attempt}/submit', [App\Http\Controllers\Student\ExamController::class, 'submitAnswer'])->name('exams.submit');
     Route::post('/exam/{attempt}/finish', [App\Http\Controllers\Student\ExamController::class, 'finish'])->name('exams.finish');
     Route::get('/exam/{attempt}/result', [App\Http\Controllers\Student\ExamController::class, 'result'])->name('exams.result');
+
+    // Wallet
+    Route::get('/wallet', [App\Http\Controllers\Student\WalletController::class, 'index'])->name('wallet.index');
+
+    // Events
+    Route::get('/events', [App\Http\Controllers\Student\EventController::class, 'index'])->name('events.index');
+    Route::post('/events/{event}/join', [App\Http\Controllers\Student\EventController::class, 'join'])->name('events.join');
 });
 
 Route::redirect('/admin', '/admin/login');

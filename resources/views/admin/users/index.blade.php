@@ -11,9 +11,9 @@
 
     <div class="card card-fixed shadow-sm border-0">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 text-gray-800 fw-bold">User Management</h5>
+            <h5 class="mb-0 text-gray-800 fw-bold">Student Management</h5>
             <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm">
-                <i class="bi bi-plus-lg me-1"></i> Add New User
+                <i class="bi bi-plus-lg me-1"></i> Add New Student
             </a>
         </div>
         <div class="card-body p-0">
@@ -23,6 +23,8 @@
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Wallet Balance</th>
+                            <th>Events Joined</th>
                             <th>Created At</th>
                             <th>Actions</th>
                         </tr>
@@ -32,6 +34,16 @@
                             <tr>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
+                                <td>
+                                    <span class="badge {{ ($user->wallet->balance ?? 0) > 0 ? 'bg-success' : 'bg-secondary' }}">
+                                        ৳ {{ number_format($user->wallet->balance ?? 0, 2) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">
+                                        {{ $user->events->count() }}
+                                    </span>
+                                </td>
                                 <td>{{ $user->created_at->format('Y-m-d') }}</td>
                                 <td>
                                     <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-info">Edit</a>

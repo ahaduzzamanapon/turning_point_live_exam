@@ -58,6 +58,13 @@ Route::prefix('admin')->group(function () {
         Route::get('results', [\App\Http\Controllers\Admin\ResultController::class, 'index'])->name('admin.results.index');
         Route::get('results/{id}', [\App\Http\Controllers\Admin\ResultController::class, 'show'])->name('admin.results.show');
 
+        // Wallet Management
+        Route::get('wallet', [\App\Http\Controllers\Admin\WalletController::class, 'index'])->name('admin.wallet.index');
+        Route::post('wallet/add', [\App\Http\Controllers\Admin\WalletController::class, 'addMoney'])->name('admin.wallet.add');
+
+        // Event Management
+        Route::resource('events', \App\Http\Controllers\Admin\EventController::class)->names('admin.events');
+
         require base_path('routes/crud.php');
     });
 });
