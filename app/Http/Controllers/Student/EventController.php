@@ -234,7 +234,7 @@ class EventController extends Controller
     {
         $participant = \App\Models\EventParticipant::with(['event', 'user'])->findOrFail($participantId);
 
-        if ($participant->user_id !== auth()->id()) {
+        if ((int) $participant->user_id !== (int) auth()->id()) {
             abort(403);
         }
 
