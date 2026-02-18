@@ -247,6 +247,47 @@ class StudentApiController extends Controller
     }
 
     // ========================
+    // EVENT RESULT
+    // ========================
+    public function eventResult(Request $request, $participantId)
+    {
+        $participant = \App\Models\EventParticipant::with(['event', 'user'])->findOrFail($participantId);
+
+        if ((int) $participant->user_id !== (int) $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $answers = \App\Models\EventAnswer::where('event_participant_id', $participant->id)
+            ->with(['question.options'])
+            ->get();
+
+        $result = [
+            'event_title' => $participant->event->title,
+            'score' => $participant->score ?? 0,
+            'completed_at' => $participant->updated_at->format('M d, Y h:i A'),
+            'answers' => $answers->map(function ($answer) {
+                return [
+                    'is_correct' => $answer->is_correct,
+                    'selected_options' => $answer->selected_options ?? [],
+                    'question' => [
+                        'question_text' => $answer->question->question_text,
+                        'answer_explanation' => $answer->question->answer_explanation,
+                        'options' => $answer->question->options->map(function ($option) {
+                            return [
+                                'id' => $option->id,
+                                'option_text' => $option->option_text,
+                                'is_correct' => $option->is_correct,
+                            ];
+                        }),
+                    ],
+                ];
+            }),
+        ];
+
+        return response()->json($result);
+    }
+
+    // ========================
     // EXAMS
     // ========================
 
