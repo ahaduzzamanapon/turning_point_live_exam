@@ -17,9 +17,7 @@ class StudentApiController extends Controller
         $user = $request->user();
 
         $availableExamsCount = Exam::where('status', 'PUBLISHED')->count();
-        $upcomingEventsCount = Event::whereIn('status', ['UPCOMING', 'LIVE'])
-            ->where('start_time', '>', now())
-            ->count();
+        $upcomingEventsCount = Event::whereIn('status', ['UPCOMING', 'LIVE'])->count();
 
         $recentResults = ExamAttempt::where('user_id', $user->id)
             ->where('status', 'COMPLETED')
@@ -229,14 +227,22 @@ class StudentApiController extends Controller
     public function wallet(Request $request)
     {
         $wallet = $request->user()->wallet;
+
+        if (!$wallet) {
+            return response()->json([
+                'balance' => 0,
+                'transactions' => [],
+            ]);
+        }
+
         $transactions = \App\Models\WalletTransaction::where('wallet_id', $wallet->id)
             ->latest()
             ->take(20)
             ->get();
 
         return response()->json([
-            'balance' => $wallet->balance,
-            'transactions' => $transactions,
+            'balance' => $wallet->balance ?? 0,
+            'transactions' => $transactions ?? [],
         ]);
     }
 
